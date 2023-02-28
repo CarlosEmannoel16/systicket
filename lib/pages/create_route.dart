@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:systikcet/api_client.dart';
+import 'package:systikcet/models/city.dart';
 
 class CreateRouter extends StatefulWidget {
-  const CreateRouter({Key? key}) : super(key: key);
+  var rota;
+  CreateRouter({Key? key, this.rota }) : super(key: key);
 
   @override
   State<CreateRouter> createState() => _CreateRouterState();
@@ -15,8 +20,49 @@ class _CreateRouterState extends State<CreateRouter> {
   final TextEditingController _destinoController = TextEditingController();
   final TextEditingController _horarioEntradaController =
       TextEditingController();
-  final TextEditingController _brancoController = TextEditingController();
+  final TextEditingController _valorController = TextEditingController();
+  String _city =  "aa";
+  List<Cities> cities = <Cities>[];
+  // ignore: deprecated_member_use
+  List _listClasses = <int>[];
 
+  getCities() async {
+    await Client.get("city").then((response) {
+      setState(() {
+        var responseData = json.decode(response.body);
+        print(responseData);
+        Iterable lista = responseData;
+        _listClasses = responseData;
+//        cities =
+//            lista.map((model) => City.fromJson(model)).toList();
+        // cities.add(lista as City);// = lista;
+            //lista.map((model) => City.fromJson(model)).toList();
+      });
+      print("dd ${_listClasses}");
+    });
+    return _listClasses;
+  }
+
+  loadForEdit() async {
+    print(widget.rota?.id);
+    var teste = widget.rota?.id != null ?  true : false;
+    print("ee ${widget.rota}");
+    if(teste) {
+      setState(()  {
+        _origemController.text = widget.rota.origem.toString();
+        _destinoController.text = widget.rota.destiny.toString();
+        _horarioEntradaController.text = widget.rota.departure_time;
+        _horarioSaidaController.text = widget.rota.arrive_time;
+        _valorController.text = widget.rota.value;
+      });
+    }
+  }
+  @override
+  void initState() {
+    // getCities();
+    loadForEdit();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +129,8 @@ class _CreateRouterState extends State<CreateRouter> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child:
-                textFormField(title: "Origem", controller: _origemController),
+               textFormField(title: "Origem", controller: _origemController),
+              //DropdownForm("Origem", _listClasses, _city),
           ),
           Container(
             height: 40,
@@ -140,7 +187,7 @@ class _CreateRouterState extends State<CreateRouter> {
             padding: const EdgeInsets.all(8.0),
             child: textFormField(
               title: "Em branco",
-              controller: _brancoController,
+              controller: _valorController,
             ),
           ),
         ],
@@ -181,15 +228,54 @@ class _CreateRouterState extends State<CreateRouter> {
     );
   }
 
-  casdastra() {
-    final String origem = _origemController.value.text;
-    final String horarioSaida = _horarioSaidaController.value.text;
-    final String subRota = _subrotaController.value.text;
+  Widget DropdownForm(String hint, data, _value){
+    return DropdownButton(
+      value: _city,
+      hint: Text(
+        hint,
+        style: TextStyle(
+          color: Color.fromRGBO(70, 168, 177, 1),
+          fontSize: 20.0,
+        ),
+      ),
+      style: TextStyle(
+        color: Color.fromRGBO(70, 168, 177, 1),
+        fontSize: 20.0,
+      ),
+      isExpanded: true,
+      underline: Container(
+        height: 2,
+        color: Color.fromRGBO(70, 168, 177, 1),
+      ),
+      onChanged: (String ? newValue) {
+        setState(() {
+          _city = newValue!;
+          print(_city);
+        });
+      },
+      items: _listClasses.map((item) {
+        print("aa ${item}");
+        return DropdownMenuItem<String>(
+          value: item['id'].toString(),
+          child: Text(item['name']),
+        );
+      }).toList(),
+    );
+  }
+  casdastra() async {
 
-    print({
-      "origim": origem,
-      "horario_saido": horarioSaida,
-      "SubRota": subRota,
+    var  data = json.encode({
+      "origem": _origemController.text,
+      "destiny": _destinoController.text,
+      "departure_time": _horarioEntradaController.text,
+      "arrive_time": _horarioSaidaController.text,
+      "value": _valorController.text
     });
+    var a = await Client.create(data, "route");
+    print(a);
+//    .then((res) {
+//    print(res.body);
+//    print(res);
+//    })
   }
 }

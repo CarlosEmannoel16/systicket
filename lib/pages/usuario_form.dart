@@ -1,37 +1,23 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 
 import '../api_client.dart';
+import '../models/user.dart';
 // import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-// import 'package:motoapp/usuario/usuario_model.dart';
-
-// import '../api.dart';
-// import 'package:http/http.dart' as http;
-
-// import '../endereco/endereco_model.dart';
 
 class UsuarioForm extends StatefulWidget {
-  var id;
-  var endereco_id;
-  var pontoId;
-  var perfil;
-  var us;
+  var user;
 
-  UsuarioForm({
-    Key? key,
-    this.id,
-    this.endereco_id,
-    this.pontoId,
-    this.perfil,
-    this.us,
-  });
+  UsuarioForm({Key? key, this.user}) : super(key: key);
 
   @override
   _UsuarioFormState createState() => _UsuarioFormState();
 }
 
 class _UsuarioFormState extends State<UsuarioForm> {
+
   TextEditingController _nomeController = TextEditingController();
   TextEditingController _cpfController = TextEditingController();
   TextEditingController _dataNascimentoController = TextEditingController();
@@ -52,9 +38,10 @@ class _UsuarioFormState extends State<UsuarioForm> {
   // var formatoDataNascimento =  MaskTextInputFormatter(mask: '##/##/####', filter: { "#": RegExp(r'[0-9]') });
   // var formatoTelefone =  MaskTextInputFormatter(mask: '(##) #####-####', filter: { "#": RegExp(r'[0-9]') });
 
-  Future _postUsuario() async {
+
+  Future _postUsuario() async{
     //  var p = widget.perfil &&  widget.perfil == "ADMIN" ? "ADMIN" : widget.perfil;
-    var dadosUsuario = json.encode({
+    var  dadosUsuario = json.encode({
       'name': _nomeController.text,
       'email': _emailController.text,
       'password': _senhaController.text,
@@ -69,82 +56,51 @@ class _UsuarioFormState extends State<UsuarioForm> {
 //    })
   }
 
+
   loadForEdit() async {
-//    print(widget.id);
-//    var teste = widget.id != null ?  true : false;
-//    if(teste) {
-//      final http.Response responseUser;
-//      final http.Response responseEndereco;
-//      responseUser = await ToDoAPI.getById("usuario", widget.id);
-//      responseEndereco = await ToDoAPI.getById("endereco", widget.endereco_id);
-//      var jsonResponse = json.decode(responseUser.body);
-//      Usuario u;
-//      var usuario =  Usuario.fromJson(jsonResponse);
-//
-//      var jsonResponseEndereco = json.decode(responseEndereco.body);
-//      var endereco =  Endereco.fromJson(jsonResponseEndereco);
-//      setState(()  {
-//        _nomeController.text = usuario.nome;
-//        _sobrenomeController.text = usuario.sobrenome;
-//        _emailController.text = usuario.email;
-//        _telefoneController.text = usuario.telefone;
-//        _senhaController.text = usuario.senha;
-//        // _perfilController.text = usuario.perfil;
-//        _senhaController.text = usuario.senha;
-//
-//        _ruaController.text = endereco.rua;
-//        _referenciaController.text = endereco.referencia;
-//        _bairroController.text = endereco.bairro;
-//        _numeroController.text = endereco.numero;
-//        _cidadeController.text = endereco.cidade;
-//      });
-//    }
+    print(widget.user?.id);
+    var teste = widget.user?.id != null ?  true : false;
+    if(teste) {
+      setState(()  {
+        _nomeController.text = widget.user.name;
+        _emailController.text = widget.user.email;
+        _telefoneController.text = widget.user.phone;
+        _senhaController.text = widget.user.password;
+      });
+    }
   }
 
-  _updateUsuario() async {
-//    print(widget.endereco_id);
-//    var  dadosUsuario = json.encode({
-//      'nome': _nomeController.text,
-//      'sobrenome': _sobrenomeController.text,
-//      'email': _emailController.text,
-//      'telefone': _telefoneController.text,
-//      'senha': _senhaController.text,
-//      'perfil': widget.us['perfil'],
-//      'rua': _ruaController.text,
-//      'referencia': _referenciaController.text,
-//      'bairro': _bairroController.text,
-//      'numero': _numeroController.text,
-//      'cidade': _cidadeController.text,
-//      'endereco_id': widget.endereco_id
-//    });
-//    ToDoAPI.update(widget.id,dadosUsuario, "usuario").then((res) {
-//      print(res.body);
-//      print(res);
-//    });
-//
+  _updateUsuario() async{
+    var data = json.encode({
+      'name': _nomeController.text,
+      'email': _emailController.text,
+      'password': _senhaController.text,
+      'phone': _telefoneController.text,
+    });
+    Client.update(widget.user.id,data, "usuario").then((res) {
+      print(res.body);
+      print(res);
+    });
+
   }
 
   @override
   void initState() {
-    // _postUsuario();
     loadForEdit();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
         appBar: AppBar(
-          title: Text(
-            "Criar Novo Usuário",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-          ),
+          title: Text("Criar Novo Usuário", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
           centerTitle: true,
-          backgroundColor: Color.fromRGBO(70, 168, 177, 1),
+          backgroundColor:  Color.fromRGBO(70, 168, 177, 1),
           // backgroundColor:  Color.fromRGBO(255, 255, 255, 1),
         ),
         body: SingleChildScrollView(
-          child: Container(
+          child:Container(
             height: 620.0,
             color: Color.fromRGBO(255, 255, 255, 1),
             padding: EdgeInsets.all(20.0),
@@ -154,40 +110,26 @@ class _UsuarioFormState extends State<UsuarioForm> {
               children: <Widget>[
                 SizedBox(
                   width: 200.0,
-                  height: 100.0,
-                  child: Form(
-                    key: _formulario,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Column(
-                          children: [
-                            FormT(
-                              200,
-                              50,
-                              _nomeController,
-                              TextInputType.text,
-                              "Antônio Carlos",
+                  height: 100.0, child:  Form(key: _formulario,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Column(
+                        children: [
+                          FormT(200,50,_nomeController, TextInputType.text, "Antônio Carlos",
                               'Nome',
-                              Colors.blue,
-                              25.0,
-                            )
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            FormT(
-                              200.0,
-                              50.0,
-                              _telefoneController,
-                              TextInputType.text,
-                              "Antônio Carlos",
+                              Colors.blue,25.0
+                          )
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          FormT(200.0,50.0,_telefoneController, TextInputType.text, "Antônio Carlos",
                               'Telefone',
-                              Colors.blue,
-                              25.0,
-                            )
-                          ],
-                        ),
+                              Colors.blue,25.0
+                          )
+                        ],
+                      ),
 //                    Column(
 //                      children: [
 //                        FormT(200,50,_cpfController, TextInputType.text, "Antônio Carlos",
@@ -196,9 +138,9 @@ class _UsuarioFormState extends State<UsuarioForm> {
 //                        )
 //                      ],
 //                    ),
-                      ],
-                    ),
+                    ],
                   ),
+                ),
                 ),
 //              SizedBox(
 //                  width: 200.0,
@@ -228,12 +170,10 @@ class _UsuarioFormState extends State<UsuarioForm> {
 //                ),
                 SizedBox(
                   width: 200.0,
-                  height: 100.0,
-                  child: Form(
-                    key: _formulario3,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
+                  height: 100.0, child:  Form(key: _formulario3,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
 //                      Column(
 //                        children: [
 //                          FormT(200.0,50.0,_telefoneController, TextInputType.text, "Antônio Carlos",
@@ -242,35 +182,25 @@ class _UsuarioFormState extends State<UsuarioForm> {
 //                          )
 //                        ],
 //                      ),
-                        Column(
-                          children: [
-                            FormT(
-                                200.0,
-                                50.0,
-                                _emailController,
-                                TextInputType.text,
-                                "Antônio Carlos",
-                                'Email',
-                                Colors.blue,
-                                25.0)
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            FormT(
-                                200.0,
-                                50.0,
-                                _senhaController,
-                                TextInputType.text,
-                                "Antônio Carlos",
-                                "Senha",
-                                Colors.blue,
-                                25.0)
-                          ],
-                        ),
-                      ],
-                    ),
+                      Column(
+                        children: [
+                          FormT(200.0,50.0,_emailController, TextInputType.text, "Antônio Carlos",
+                              'Email',
+                              Colors.blue,25.0
+                          )
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          FormT(200.0,50.0,_senhaController, TextInputType.text, "Antônio Carlos",
+                              "Senha",
+                              Colors.blue,25.0
+                          )
+                        ],
+                      ),
+                    ],
                   ),
+                ),
                 ),
 //              SizedBox(
 //                  width: 200.0,
@@ -300,24 +230,18 @@ class _UsuarioFormState extends State<UsuarioForm> {
 //                ),
                 SizedBox(
                   child: Padding(
-                      padding: EdgeInsets.only(
-                          top: 15.0, bottom: 10.0, left: 400.0, right: 400.0),
-                      child: Container(
-                        height: 50.0,
+                      padding: EdgeInsets.only(top: 15.0, bottom: 10.0, left: 400.0,right: 400.0),
+                      child: Container(height: 50.0,
                         width: 10.0,
-                        child: OutlinedButton(
-                          child: Text(
-                            widget.id != null ? "ATUALIZAR" : "CADASTRAR",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25.0,
-                                color: Colors.white),
-                          ),
-                          onPressed: () async {
-                            if (_formulario.currentState!.validate()) {
-                              var action = widget.id != null
-                                  ? _updateUsuario
-                                  : _postUsuario;
+                        child: RaisedButton(
+                          child: Text(widget.user?.id != null ? "ATUALIZAR" : "CADASTRAR", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0,color: Colors.white),),
+                          textColor: Colors.white,
+                          color:Color.fromRGBO(109, 181, 84, 0.9),
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5.0)),
+                          onPressed:  ()async
+                          {
+                            if(_formulario.currentState!.validate()){
+                              var action = widget.user.id != null ? _updateUsuario :  _postUsuario;
                               await action();
 //                            var _resultado = await action();
 //                            //Navigator.pop(context);
@@ -332,60 +256,65 @@ class _UsuarioFormState extends State<UsuarioForm> {
                             }
                           },
                         ),
-                      )),
+                      )
+                  ),
                 )
               ],
             ),
           ),
-        ));
+        )
+    );
+
   }
 
-  Alerta() {
+
+
+  Alerta(){
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("ERRO"),
           content: Text("ERRO AO SALVAR DADOS, TENTE NOVAMENTE"),
-          backgroundColor: Color.fromRGBO(70, 168, 177, 1),
+          backgroundColor:Color.fromRGBO(70, 168, 177, 1) ,
           actions: <Widget>[
-            TextButton(
-                child: Text(
-                  "OK",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                })
+            FlatButton(
+                child: Text("OK",style: TextStyle(color: Colors.white),),
+                onPressed:(){ Navigator.of(context).pop();}
+            )
           ],
         );
       },
     );
   }
 
-  Widget FormT(double width, double height, controle, typeInput, String hint,
-      String label, font, color) {
+  Widget FormT(double width, double height, controle, typeInput, String hint, String label, font, color ){
     return Padding(
       padding: EdgeInsets.only(top: 1.0, bottom: 1.0),
       child: SizedBox(
         width: width,
         height: height,
         child: TextFormField(
-            // key: _formulario,
-            controller: controle,
+          // key: _formulario,
+            controller:  controle,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
-                //icon: Icon(Icons.person),
-                hintText: hint,
+              //icon: Icon(Icons.person),
+                hintText:hint,
                 labelText: label,
-                labelStyle: TextStyle(color: Colors.blue, fontSize: 25.0)),
+                labelStyle: TextStyle(color: Colors.blue,fontSize: 25.0)
+            ),
             // ignore: missing_return
-            validator: (value) {
-              if (value!.isEmpty) {
+            validator:(value) {
+              if(value!.isEmpty){
                 return "CAMPO OBRIGATÓRIO";
               }
-            }),
+            }
+        ),
       ),
+
+
+
     );
   }
 }

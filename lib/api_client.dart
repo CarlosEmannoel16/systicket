@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 
 abstract class Client {
-  static String urlBase = 'http:// 172.16.5.110:3000/';
+  static String urlBase = 'http://172.16.4.241:3000/';
   static Uri formatUrl(path, { id: null }) {
     Uri url;
     if (id != null) {

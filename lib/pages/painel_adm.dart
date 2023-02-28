@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:systikcet/pages/create_route.dart';
+import 'package:systikcet/pages/home_client.dart';
+import 'package:systikcet/pages/relatorio_home.dart';
+import 'package:systikcet/pages/roite_client.dart';
+import 'package:systikcet/pages/route_list.dart';
+import 'package:systikcet/pages/user_list.dart';
 
 class PainelADM extends StatelessWidget {
   const PainelADM({Key? key}) : super(key: key);
@@ -31,7 +36,7 @@ class PainelADM extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CreateRouter(),
+                          builder: (context) =>  CreateRouter(),
                         ),
                       );
                     },
@@ -42,7 +47,10 @@ class PainelADM extends StatelessWidget {
                   containerConfig(
                     title: "Ver rotas",
                     icon: Icons.route,
-                    onTap: () {},
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => const ListRouter(),
+                        ),
+                    )
                   ),
                   Container(
                     width: sizeBox,
@@ -50,7 +58,15 @@ class PainelADM extends StatelessWidget {
                   containerConfig(
                     title: "Relatorios",
                     icon: Icons.report,
-                    onTap: () {},
+                    onTap: () =>
+//                        Navigator.push(context,
+//                      MaterialPageRoute(builder: (context) => UserClientPage(),
+//                      ),
+                          Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => RelatorioHomePage()
+                              ,
+                            ),
+                    ),
                   ),
                   Container(
                     width: sizeBox,
@@ -66,7 +82,14 @@ class PainelADM extends StatelessWidget {
                   containerConfig(
                     title: "Configuração de usuarios",
                     icon: Icons.settings,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserListPage(),
+                        ),
+                      );
+                    },
                   ),
                   Container(
                     width: sizeBox,
@@ -74,7 +97,14 @@ class PainelADM extends StatelessWidget {
                   containerConfig(
                     title: "Sair",
                     icon: Icons.exit_to_app,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeClient(),
+                        ),
+                      );
+                    },
                   ),
                   Container(
                     width: sizeBox,
