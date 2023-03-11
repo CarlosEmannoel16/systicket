@@ -21,42 +21,11 @@ class _RelatorioHomeState extends State<RelatorioHomePage> {
   final TextEditingController _origemController = TextEditingController();
   final TextEditingController _destinoController = TextEditingController();
 
-  loadForEdit() async {
-//    print(widget.id);
-//    var teste = widget.id != null ?  true : false;
-//    if(teste) {
-//      final http.Response responseUser;
-//      final http.Response responseEndereco;
-//      responseUser = await ToDoAPI.getById("usuario", widget.id);
-//      responseEndereco = await ToDoAPI.getById("endereco", widget.endereco_id);
-//      var jsonResponse = json.decode(responseUser.body);
-//      Usuario u;
-//      var usuario =  Usuario.fromJson(jsonResponse);
-//
-//      var jsonResponseEndereco = json.decode(responseEndereco.body);
-//      var endereco =  Endereco.fromJson(jsonResponseEndereco);
-//      setState(()  {
-//        _nomeController.text = usuario.nome;
-//        _sobrenomeController.text = usuario.sobrenome;
-//        _emailController.text = usuario.email;
-//        _telefoneController.text = usuario.telefone;
-//        _senhaController.text = usuario.senha;
-//        // _perfilController.text = usuario.perfil;
-//        _senhaController.text = usuario.senha;
-//
-//        _ruaController.text = endereco.rua;
-//        _referenciaController.text = endereco.referencia;
-//        _bairroController.text = endereco.bairro;
-//        _numeroController.text = endereco.numero;
-//        _cidadeController.text = endereco.cidade;
-//      });
-//    }
-  }
   List<User> userList = <User>[];
   List<Routes> routeList = <Routes>[];
 
   void getRoute() async {
-    await Client.get("route").then((response) {
+    await Client.get("purchase").then((response) {
       setState(() {
         var responseData = json.decode(response.body);
         print(responseData);
@@ -107,17 +76,20 @@ class _RelatorioHomeState extends State<RelatorioHomePage> {
                               child: paddingInputRight(),
                             ),
                             Expanded(
-                              child:  OutlinedButton(
-                                onPressed: null,
-                                child: const Text(
-                                  "BUSCAR",
-                                  style: TextStyle(
-                                    color: Colors.white,
+                              child:  SizedBox(
+                                height: 50,
+                                child: OutlinedButton(
+                                  onPressed: search,
+                                  child: const Text(
+                                    "BUSCAR",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  elevation: 2.0,
-                                  backgroundColor: const Color.fromRGBO(109, 181, 84, 1),
+                                  style: OutlinedButton.styleFrom(
+                                    elevation: 2.0,
+                                    backgroundColor: const Color.fromRGBO(109, 181, 84, 1),
+                                  ),
                                 ),
                               ),
                             ),
@@ -208,6 +180,7 @@ class _RelatorioHomeState extends State<RelatorioHomePage> {
     return [
       DataColumn(label: Text('Origem/Destino', textAlign: TextAlign.center, style: TextStyle(color: Colors.red),)),
       DataColumn(label: Text('Saida/Chegada')),
+      DataColumn(label: Text('Nº de Passagens Vendidida')),
 //      DataColumn(label: Text('Valor')),
 //      DataColumn(label: Text('')),
     ];
@@ -217,6 +190,8 @@ class _RelatorioHomeState extends State<RelatorioHomePage> {
         .map((route) => DataRow(cells: [
       DataCell(Text("${route.origemName}/${route.destinyName}")),
       DataCell(Text("${route.departure_time}/${route.arrive_time}")),
+      DataCell(Text(route.purchaseCount.toString())),
+
 //      DataCell(Text("R\$ ${route.value}")),
 //      DataCell(Row(children: [
 //        GestureDetector(
@@ -369,5 +344,21 @@ class _RelatorioHomeState extends State<RelatorioHomePage> {
         ),
       ),
     );
+  }
+  search() async{
+    print("aaa");
+    await Client.getT("purchase/filter", origem:  _origemController.text,
+        destino: _destinoController.text).then((response) {
+      setState(() {
+        print(response.body);
+        var responseData = json.decode(response.body);
+        print(responseData);
+        Iterable lista = responseData;
+        routeList =
+            lista.map((model) => Routes.fromJson(model)).toList();
+      });
+      print("dd ${routeList}");
+    });
+    ///print(a);
   }
 }

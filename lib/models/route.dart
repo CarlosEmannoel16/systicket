@@ -12,6 +12,7 @@ class Routes {
   final String value;
   final String origemName;
   final String destinyName;
+  final int purchaseCount;
   // final int router_id;
 
   const Routes({
@@ -22,7 +23,8 @@ class Routes {
     required this.arrive_time,
     required this.value,
     required this.origemName,
-    required this.destinyName
+    required this.destinyName,
+    required this.purchaseCount
     // required this.router_id
   });
 
@@ -35,8 +37,8 @@ class Routes {
         departure_time: json['departure_time'],
         value: json['value'],
         origemName: json['origemName'],
-        destinyName: json['destinyName']
-
+        destinyName: json['destinyName'],
+        purchaseCount: json['purchaseCount'] != null ? json['purchaseCount'] : 0
         // router_id: json['router_id'] ? json['router_id'] : 0
     );
   }
@@ -51,6 +53,7 @@ class Routes {
     data['value'] = this.value;
     data['origemName'] = this.origemName;
     data['destinyName'] = this.destinyName;
+    data['purchaseCount'] = this.purchaseCount;
 
 
     // data['route_id'] = this.router_id;

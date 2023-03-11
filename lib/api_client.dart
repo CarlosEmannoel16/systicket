@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 
 abstract class Client {
-  static String urlBase = 'http://172.16.4.241:3000/';
+  static String urlBase = 'http://192.168.1.101:3000/';
   static Uri formatUrl(path, { id: null }) {
     Uri url;
     if (id != null) {
@@ -16,7 +16,8 @@ abstract class Client {
     Uri url = Uri.parse('${urlBase}'+path);
     return http.get(url);
   }
-  static Future getById(path, id) {
+  static Future getById(path, {id}) {
+    print("erer $id");
     Uri url = Uri.parse('${urlBase}'+path+'/'+'${id}');
     print(url);
     return http.get(url);
@@ -37,11 +38,13 @@ abstract class Client {
     return http.delete(url);
   }
 
-  static Future getT(path,{ query = null}) async{
-    var url;
-    if(query != null)
-      url =  formatUrl(path+'?'+'ponto=$query');
-    else  url =  formatUrl(path);
+  static Future getT(path,{ origem = null, destino= null, data = null} ) async{
+    print("qqq ${origem}");
+    //var url;
+    Uri url = Uri.parse('${urlBase}'+path+'?'+'origem=$origem'+'&'+'destino=$destino'+'&'+'data=$data');
+//    if(origem != null)
+//      url =  formatUrl(path+'?'+'origem=$origem');
+//    else  url =  formatUrl(path);
     return http.get(url, headers:{'Content-Type': 'application/json'});
   }
 

@@ -59,14 +59,15 @@ class PainelADM extends StatelessWidget {
                     title: "Relatorios",
                     icon: Icons.report,
                     onTap: () =>
-//                        Navigator.push(context,
-//                      MaterialPageRoute(builder: (context) => UserClientPage(),
-//                      ),
-                          Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => RelatorioHomePage()
-                              ,
-                            ),
-                    ),
+                        Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => UserClientPage(),
+                      )
+                        ),
+//                          Navigator.push(context,
+//                            MaterialPageRoute(builder: (context) => RelatorioHomePage()
+//                              ,
+//                            ),
+//                          ),
                   ),
                   Container(
                     width: sizeBox,
@@ -109,6 +110,16 @@ class PainelADM extends StatelessWidget {
                   Container(
                     width: sizeBox,
                   ),
+                  containerConfig(
+                    title: "Relatorios",
+                    icon: Icons.report,
+                    onTap: () =>
+                          Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => RelatorioHomePage()
+                              ,
+                            ),
+                          ),
+                  )
                 ],
               ),
             ],

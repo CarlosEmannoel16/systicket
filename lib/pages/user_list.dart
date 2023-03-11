@@ -7,12 +7,6 @@ import 'package:systikcet/pages/usuario_form.dart';
 
 import '../api_client.dart';
 // import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-// import 'package:motoapp/usuario/usuario_model.dart';
-
-// import '../api.dart';
-// import 'package:http/http.dart' as http;
-
-// import '../endereco/endereco_model.dart';
 
 class UserListPage extends StatefulWidget {
 
@@ -24,60 +18,6 @@ class UserListPage extends StatefulWidget {
 
 class _UserListPageState extends State<UserListPage> {
 
-  loadForEdit() async {
-//    print(widget.id);
-//    var teste = widget.id != null ?  true : false;
-//    if(teste) {
-//      final http.Response responseUser;
-//      final http.Response responseEndereco;
-//      responseUser = await ToDoAPI.getById("usuario", widget.id);
-//      responseEndereco = await ToDoAPI.getById("endereco", widget.endereco_id);
-//      var jsonResponse = json.decode(responseUser.body);
-//      Usuario u;
-//      var usuario =  Usuario.fromJson(jsonResponse);
-//
-//      var jsonResponseEndereco = json.decode(responseEndereco.body);
-//      var endereco =  Endereco.fromJson(jsonResponseEndereco);
-//      setState(()  {
-//        _nomeController.text = usuario.nome;
-//        _sobrenomeController.text = usuario.sobrenome;
-//        _emailController.text = usuario.email;
-//        _telefoneController.text = usuario.telefone;
-//        _senhaController.text = usuario.senha;
-//        // _perfilController.text = usuario.perfil;
-//        _senhaController.text = usuario.senha;
-//
-//        _ruaController.text = endereco.rua;
-//        _referenciaController.text = endereco.referencia;
-//        _bairroController.text = endereco.bairro;
-//        _numeroController.text = endereco.numero;
-//        _cidadeController.text = endereco.cidade;
-//      });
-//    }
-  }
-
-  _updateUsuario() async{
-//    print(widget.endereco_id);
-//    var  dadosUsuario = json.encode({
-//      'nome': _nomeController.text,
-//      'sobrenome': _sobrenomeController.text,
-//      'email': _emailController.text,
-//      'telefone': _telefoneController.text,
-//      'senha': _senhaController.text,
-//      'perfil': widget.us['perfil'],
-//      'rua': _ruaController.text,
-//      'referencia': _referenciaController.text,
-//      'bairro': _bairroController.text,
-//      'numero': _numeroController.text,
-//      'cidade': _cidadeController.text,
-//      'endereco_id': widget.endereco_id
-//    });
-//    ToDoAPI.update(widget.id,dadosUsuario, "usuario").then((res) {
-//      print(res.body);
-//      print(res);
-//    });
-//
-  }
   List<User> userList = <User>[];
 
   void getUsers() async {
@@ -120,6 +60,7 @@ class _UserListPageState extends State<UserListPage> {
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UsuarioForm()))
                     ,
                   ),
+
                   _createDataTable(),
                 ],
               )
@@ -229,7 +170,7 @@ class _UserListPageState extends State<UserListPage> {
         Padding(
           padding: EdgeInsets.only(left: 10.0),
             child: OutlinedButton(
-              onPressed: () => null,
+              onPressed: () async => await delete(user.id),
               child: const Text(
                 "Excluir",
                 style: TextStyle(
@@ -249,5 +190,10 @@ class _UserListPageState extends State<UserListPage> {
       )
     ]))
         .toList();
+  }
+  delete(int id) async {
+    var a = await Client.delete("usuario", id);
+    print(a);
+    getUsers();
   }
 }

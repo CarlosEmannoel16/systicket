@@ -241,7 +241,7 @@ class _UsuarioFormState extends State<UsuarioForm> {
                           onPressed:  ()async
                           {
                             if(_formulario.currentState!.validate()){
-                              var action = widget.user.id != null ? _updateUsuario :  _postUsuario;
+                              var action = widget.user != null ? _updateUsuario :  _postUsuario;
                               await action();
 //                            var _resultado = await action();
 //                            //Navigator.pop(context);

@@ -21,10 +21,11 @@ class _CreateRouterState extends State<CreateRouter> {
   final TextEditingController _horarioEntradaController =
       TextEditingController();
   final TextEditingController _valorController = TextEditingController();
-  String _city =  "aa";
+  var _cityOrigem =  null;
+  var _cityDestino =  null;
   List<Cities> cities = <Cities>[];
   // ignore: deprecated_member_use
-  List _listClasses = <int>[];
+  List<Cities> _listClasses = <Cities>[];
 
   getCities() async {
     await Client.get("city").then((response) {
@@ -32,9 +33,8 @@ class _CreateRouterState extends State<CreateRouter> {
         var responseData = json.decode(response.body);
         print(responseData);
         Iterable lista = responseData;
-        _listClasses = responseData;
-//        cities =
-//            lista.map((model) => City.fromJson(model)).toList();
+        _listClasses =
+            lista.map((model) => Cities.fromJson(model)).toList();
         // cities.add(lista as City);// = lista;
             //lista.map((model) => City.fromJson(model)).toList();
       });
@@ -44,11 +44,13 @@ class _CreateRouterState extends State<CreateRouter> {
   }
 
   loadForEdit() async {
-    print(widget.rota?.id);
+    //print(widget.rota?.id);
     var teste = widget.rota?.id != null ?  true : false;
-    print("ee ${widget.rota}");
+    //print("ee ${widget.rota}");
     if(teste) {
       setState(()  {
+        _cityOrigem = widget.rota.origem.toString();
+        _cityDestino = widget.rota.destiny.toString();
         _origemController.text = widget.rota.origem.toString();
         _destinoController.text = widget.rota.destiny.toString();
         _horarioEntradaController.text = widget.rota.departure_time;
@@ -59,7 +61,12 @@ class _CreateRouterState extends State<CreateRouter> {
   }
   @override
   void initState() {
-    // getCities();
+    getCities();
+    //print(_listClasses[0].name);
+//    _city = "AA";
+    cities = _listClasses;
+    print(cities);
+    _listClasses = _listClasses;
     loadForEdit();
     super.initState();
   }
@@ -100,8 +107,8 @@ class _CreateRouterState extends State<CreateRouter> {
                 height: 50,
                 child: OutlinedButton(
                   onPressed: casdastra,
-                  child: const Text(
-                    "Cadastra",
+                  child:  Text(
+                    widget.rota != null ? "Atualizar" : "Cadastra" ,
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -129,8 +136,8 @@ class _CreateRouterState extends State<CreateRouter> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child:
-               textFormField(title: "Origem", controller: _origemController),
-              //DropdownForm("Origem", _listClasses, _city),
+               //textFormField(title: "Origem", controller: _origemController),
+              DropdownForm("Origem"),
           ),
           Container(
             height: 40,
@@ -166,10 +173,8 @@ class _CreateRouterState extends State<CreateRouter> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: textFormField(
-              title: "Destino",
-              controller: _destinoController,
-            ),
+            child: DropdownForm2("Destino"),
+            //textFormField(title: "Destino", controller: _destinoController,),
           ),
           Container(
             height: 40,
@@ -186,7 +191,7 @@ class _CreateRouterState extends State<CreateRouter> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: textFormField(
-              title: "Em branco",
+              title: "Valor",
               controller: _valorController,
             ),
           ),
@@ -228,9 +233,9 @@ class _CreateRouterState extends State<CreateRouter> {
     );
   }
 
-  Widget DropdownForm(String hint, data, _value){
+  Widget DropdownForm(String hint){
     return DropdownButton(
-      value: _city,
+      value: _cityOrigem != null ? _cityOrigem : null,
       hint: Text(
         hint,
         style: TextStyle(
@@ -247,32 +252,77 @@ class _CreateRouterState extends State<CreateRouter> {
         height: 2,
         color: Color.fromRGBO(70, 168, 177, 1),
       ),
-      onChanged: (String ? newValue) {
+      onChanged: (newValue) {
+        print(newValue);
         setState(() {
-          _city = newValue!;
-          print(_city);
+          _cityOrigem = newValue!;
+          print(_cityOrigem);
         });
       },
       items: _listClasses.map((item) {
         print("aa ${item}");
-        return DropdownMenuItem<String>(
-          value: item['id'].toString(),
-          child: Text(item['name']),
+        return DropdownMenuItem(
+          value: item.id.toString(),
+          child: Text(item.name),
         );
       }).toList(),
     );
   }
+  Widget DropdownForm2(String hint){
+    return DropdownButton(
+      value: _cityDestino != null ? _cityDestino : null,
+      hint: Text(
+        hint,
+        style: TextStyle(
+          color: Color.fromRGBO(70, 168, 177, 1),
+          fontSize: 20.0,
+        ),
+      ),
+      style: TextStyle(
+        color: Color.fromRGBO(70, 168, 177, 1),
+        fontSize: 20.0,
+      ),
+      isExpanded: true,
+      underline: Container(
+        height: 2,
+        color: Color.fromRGBO(70, 168, 177, 1),
+      ),
+      onChanged: (newValue) {
+        print(newValue);
+        setState(() {
+          _cityDestino = newValue!;
+          print(_cityDestino);
+        });
+      },
+      items: _listClasses.map((item) {
+        print("aa ${item}");
+        return DropdownMenuItem(
+          value: item.id.toString(),
+          child: Text(item.name),
+        );
+      }).toList(),
+    );
+  }
+
+
   casdastra() async {
 
     var  data = json.encode({
-      "origem": _origemController.text,
-      "destiny": _destinoController.text,
+      "origem": _cityOrigem,
+      "destiny": _cityDestino,
       "departure_time": _horarioEntradaController.text,
       "arrive_time": _horarioSaidaController.text,
       "value": _valorController.text
     });
-    var a = await Client.create(data, "route");
-    print(a);
+    var action;
+    if(widget.rota != null) {
+      action = await Client.update(widget.rota.id,data, "route");
+    }
+    else {
+      var a = await Client.create(data, "route");
+    }
+
+    print(action);
 //    .then((res) {
 //    print(res.body);
 //    print(res);

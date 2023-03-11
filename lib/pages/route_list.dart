@@ -42,6 +42,22 @@ class _ListRouterState extends State<ListRouter> {
     });
     // return _listClasses;
   }
+
+  search() async{
+    await Client.getT("route/filter", origem:  _origemController.text,
+        destino: _destinoController.text).then((response) {
+      setState(() {
+        print(response.body);
+        var responseData = json.decode(response.body);
+        print(responseData);
+        Iterable lista = responseData;
+        routeList =
+            lista.map((model) => Routes.fromJson(model)).toList();
+      });
+      // print("dd ${_listClasses}");
+    });
+    ///print(a);
+  }
   @override
   void initState() {
     getRoute();
@@ -81,17 +97,20 @@ class _ListRouterState extends State<ListRouter> {
                           child: paddingInputRight(),
                         ),
                         Expanded(
-                          child:  OutlinedButton(
-                            onPressed: casdastra,
-                            child: const Text(
-                              "BUSCAR",
-                              style: TextStyle(
-                                color: Colors.white,
+                          child:  SizedBox(
+                            height: 50.0,
+                            child: OutlinedButton(
+                              onPressed: search,
+                              child: const Text(
+                                "BUSCAR",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              elevation: 2.0,
-                              backgroundColor: const Color.fromRGBO(109, 181, 84, 1),
+                              style: OutlinedButton.styleFrom(
+                                elevation: 2.0,
+                                backgroundColor: const Color.fromRGBO(109, 181, 84, 1),
+                              ),
                             ),
                           ),
                         ),
@@ -101,7 +120,7 @@ class _ListRouterState extends State<ListRouter> {
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         height: 250,
-                        child: RouteView(),
+                        child: routeList.length != 0 ? RouteView() : Container(),
                       )
                       //RouteView(),
                     ),
@@ -226,7 +245,7 @@ class _ListRouterState extends State<ListRouter> {
               ),
 
               OutlinedButton(
-                onPressed: casdastra,
+                onPressed: () async=> await delete(routeList[index].id),
                 child: const Text(
                   "Excluir",
                   style: TextStyle(
@@ -258,9 +277,10 @@ class _ListRouterState extends State<ListRouter> {
     });
     var a = await Client.create(data, "route");
     print(a);
-//    .then((res) {
-//    print(res.body);
-//    print(res);
-//    })
+  }
+  delete(int id) async {
+    var a = await Client.delete("route", id);
+    print(a);
+    getRoute();
   }
 }
