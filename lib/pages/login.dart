@@ -92,6 +92,9 @@ class _LoginState extends State<Login> {
                               elevation: 2.0,
                               backgroundColor:
                                   const Color.fromRGBO(255, 176, 102, 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0.0),
+                              ),
                             ),
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {

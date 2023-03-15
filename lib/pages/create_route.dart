@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:systikcet/api_client.dart';
 import 'package:systikcet/models/city.dart';
+import 'package:systikcet/pages/painel_adm.dart';
 
 class CreateRouter extends StatefulWidget {
   var rota;
   var func;
-  CreateRouter({Key? key, this.rota,this.func}) : super(key: key);
+  CreateRouter({Key? key, this.rota, this.func}) : super(key: key);
 
   @override
   State<CreateRouter> createState() => _CreateRouterState();
@@ -22,8 +23,8 @@ class _CreateRouterState extends State<CreateRouter> {
   final TextEditingController _horarioEntradaController =
       TextEditingController();
   final TextEditingController _valorController = TextEditingController();
-  var _cityOrigem =  null;
-  var _cityDestino =  null;
+  var _cityOrigem = null;
+  var _cityDestino = null;
   List<Cities> cities = <Cities>[];
   // ignore: deprecated_member_use
   List<Cities> _listClasses = <Cities>[];
@@ -36,10 +37,9 @@ class _CreateRouterState extends State<CreateRouter> {
         var responseData = json.decode(response.body);
         print(responseData);
         Iterable lista = responseData;
-        _listClasses =
-            lista.map((model) => Cities.fromJson(model)).toList();
+        _listClasses = lista.map((model) => Cities.fromJson(model)).toList();
         // cities.add(lista as City);// = lista;
-            //lista.map((model) => City.fromJson(model)).toList();
+        //lista.map((model) => City.fromJson(model)).toList();
       });
       print("dd ${_listClasses}");
     });
@@ -48,11 +48,11 @@ class _CreateRouterState extends State<CreateRouter> {
 
   loadForEdit() async {
     //print(widget.rota?.id);
-    var teste = widget.rota?.id != null ?  true : false;
+    var teste = widget.rota?.id != null ? true : false;
     print("ee ${widget.rota.router_id}");
     print("ee ${widget.rota.id}");
-    if(teste) {
-      setState(()  {
+    if (teste) {
+      setState(() {
         _cityOrigem = widget.rota.origem.toString();
         _cityDestino = widget.rota.destiny.toString();
         _origemController.text = widget.rota.origem.toString();
@@ -64,29 +64,27 @@ class _CreateRouterState extends State<CreateRouter> {
       });
     }
   }
+
   @override
   void initState() {
     getCities();
-    //print(_listClasses[0].name);
-//    _city = "AA";
     cities = _listClasses;
-    print(cities);
     _listClasses = _listClasses;
     loadForEdit();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading:  IconButton(
+        leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: ()async {
+          onPressed: () async {
             Navigator.of(context).pop();
-            if(widget.func !=  null)
-              await widget.func();
+            if (widget.func != null) await widget.func();
           },
-        ) ,
+        ),
         title: const Text(
           "Criar rota",
           style: TextStyle(
@@ -102,41 +100,42 @@ class _CreateRouterState extends State<CreateRouter> {
         child: Form(
           key: _formulario,
           child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: paddingInputLeft(),
-                ),
-                Expanded(
-                  child: paddingInputRight(),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 300,
-                height: 50,
-                child: OutlinedButton(
-                  onPressed: casdastra,
-                  child:  Text(
-                    widget.rota != null ? "Atualizar" : "Cadastra" ,
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: paddingInputLeft(),
                   ),
-                  style: OutlinedButton.styleFrom(
-                    elevation: 2.0,
-                    backgroundColor: const Color.fromRGBO(255, 176, 102, 1),
+                  Expanded(
+                    child: paddingInputRight(),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: 300,
+                  height: 50,
+                  child: OutlinedButton(
+                    onPressed: casdastra,
+                    child: Text(
+                      widget.rota != null ? "Atualizar" : "Cadastra",
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      elevation: 2.0,
+                      backgroundColor: const Color.fromRGBO(255, 176, 102, 1),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -151,8 +150,8 @@ class _CreateRouterState extends State<CreateRouter> {
           Padding(
             padding: const EdgeInsets.all(7.0),
             child:
-               //textFormField(title: "Origem", controller: _origemController),
-              DropdownForm("Origem"),
+                //textFormField(title: "Origem", controller: _origemController),
+                dropdownForm("Origem"),
           ),
           Container(
             height: 9,
@@ -188,7 +187,7 @@ class _CreateRouterState extends State<CreateRouter> {
         children: [
           Padding(
             padding: const EdgeInsets.all(7.0),
-            child: DropdownForm2("Destino"),
+            child: dropdownForm2("Destino"),
             //textFormField(title: "Destino", controller: _destinoController,),
           ),
           Container(
@@ -253,81 +252,81 @@ class _CreateRouterState extends State<CreateRouter> {
     );
   }
 
-  Widget DropdownForm(String hint){
+  Widget dropdownForm(String hint) {
     return DropdownButton(
-      value: _cityOrigem != null ? _cityOrigem : null,
+      value: _cityOrigem,
       hint: Text(
         hint,
-        style: TextStyle(
-          color: Color.fromRGBO(70, 168, 177, 1),
+        style: const TextStyle(
+          color: Colors.black,
           fontSize: 20.0,
         ),
       ),
-      style: TextStyle(
-        color: Color.fromRGBO(70, 168, 177, 1),
+      style: const TextStyle(
+        color: Color.fromRGBO(255, 176, 102, 1),
         fontSize: 20.0,
       ),
       isExpanded: true,
       underline: Container(
         height: 2,
-        color: Color.fromRGBO(70, 168, 177, 1),
+        color: const Color.fromRGBO(255, 176, 102, 1),
       ),
       onChanged: (newValue) {
-        print(newValue);
-        setState(() {
-          _cityOrigem = newValue!;
-          print(_cityOrigem);
-        });
-      },
-      items: _listClasses.map((item) {
-        print("aa ${item}");
-        return DropdownMenuItem(
-          value: item.id.toString(),
-          child: Text(item.name),
+        setState(
+          () {
+            _cityOrigem = newValue!;
+          },
         );
-      }).toList(),
+      },
+      items: _listClasses.map(
+        (item) {
+          return DropdownMenuItem(
+            value: item.id.toString(),
+            child: Text(item.name),
+          );
+        },
+      ).toList(),
     );
   }
-  Widget DropdownForm2(String hint){
+
+  Widget dropdownForm2(String hint) {
     return DropdownButton(
-      value: _cityDestino != null ? _cityDestino : null,
+      value: _cityDestino,
       hint: Text(
         hint,
-        style: TextStyle(
-          color: Color.fromRGBO(70, 168, 177, 1),
+        style: const TextStyle(
+          color: Colors.black,
           fontSize: 20.0,
         ),
       ),
-      style: TextStyle(
-        color: Color.fromRGBO(70, 168, 177, 1),
+      style: const TextStyle(
+        color: Color.fromRGBO(255, 176, 102, 1),
         fontSize: 20.0,
       ),
       isExpanded: true,
       underline: Container(
         height: 2,
-        color: Color.fromRGBO(70, 168, 177, 1),
+        color: const Color.fromRGBO(255, 176, 102, 1),
       ),
       onChanged: (newValue) {
-        print(newValue);
         setState(() {
           _cityDestino = newValue!;
-          print(_cityDestino);
         });
       },
-      items: _listClasses.map((item) {
-        print("aa ${item}");
-        return DropdownMenuItem(
-          value: item.id.toString(),
-          child: Text(item.name),
-        );
-      }).toList(),
+      items: _listClasses.map(
+        (item) {
+          return DropdownMenuItem(
+            value: item.id.toString(),
+            child: Text(item.name),
+          );
+        },
+      ).toList(),
     );
   }
 
-
   casdastra() async {
-    if(_formulario.currentState!.validate()){
-      var  data = json.encode({
+    if (_formulario.currentState!.validate()) {
+      var data = json.encode({
         "origem": _cityOrigem,
         "destiny": _cityDestino,
         "departure_time": _horarioEntradaController.text,
@@ -336,19 +335,40 @@ class _CreateRouterState extends State<CreateRouter> {
         "router_id": _subrotaController.text
       });
       var action;
-      if(widget.rota != null) {
-        action = await Client.update(widget.rota.id,data, "route");
+      if (widget.rota != null) {
+        await Client.update(widget.rota.id, data, "route").then(
+          (value) => {showModal("Atualizado com sucesso!")},
+        );
+      } else {
+        await Client.create(data, "route").then(
+          (value) => {showModal("Cadastrado com sucesso!")},
+        );
+        ;
       }
-      else {
-        var a = await Client.create(data, "route");
-      }
-
-      print(action);
-//    .then((res) {
-//    print(res.body);
-//    print(res);
-//    })
     }
-    }
+  }
 
+  showModal(
+    String content,
+  ) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: Text(content),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PainelADM(),
+                ),
+              );
+            },
+            child: const Text('Ok'),
+          ),
+        ],
+      ),
+    );
+  }
 }
