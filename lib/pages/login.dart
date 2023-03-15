@@ -4,6 +4,7 @@ import 'package:systikcet/pages/painel_adm.dart';
 import 'package:systikcet/pages/usuario_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:systikcet/pages/widget/modal_content.dart';
 import 'package:systikcet/pages/widget/text_form_field.dart';
 import '../auth/auth.dart';
 
@@ -97,8 +98,8 @@ class _LoginState extends State<Login> {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                // String data = await _login()
-                                if (true) {
+                                if (_emailController.text == "admin" &&
+                                    _passwordController.text == "admin") {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -109,14 +110,22 @@ class _LoginState extends State<Login> {
                                   setState(() {
                                     isLoading = false;
                                   });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        "Atenção! Login ou Senha incorrentos.",
-                                        style: TextStyle(
-                                          color: Color(0xFFFF0000),
+                                  showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text('Campos incorretos'),
+                                      content:
+                                          const Text('Usuario/senha invalido'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                            context,
+                                            'Tente novamente',
+                                          ),
+                                          child: const Text('Tente novamente'),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   );
                                 }
