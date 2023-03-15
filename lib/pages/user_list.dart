@@ -9,8 +9,8 @@ import '../api_client.dart';
 // import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class UserListPage extends StatefulWidget {
-
-  UserListPage();
+  var func;
+  UserListPage({Key? key, this.func}) : super(key: key);
 
   @override
   _UserListPageState createState() => _UserListPageState();
@@ -33,6 +33,7 @@ class _UserListPageState extends State<UserListPage> {
   }
   @override
   void initState() {
+
     getUsers();
     super.initState();
   }
@@ -57,7 +58,7 @@ class _UserListPageState extends State<UserListPage> {
                 children: [
                   GestureDetector(
                     child: Text("Adicionar novo usuário"),
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UsuarioForm()))
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UsuarioForm(func: getUsers,)))
                     ,
                   ),
 
@@ -154,7 +155,7 @@ class _UserListPageState extends State<UserListPage> {
           child: OutlinedButton(
             onPressed: () =>
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => UsuarioForm(user: user,))),
+                    MaterialPageRoute(builder: (context) => UsuarioForm(user: user,func: getUsers))),
             child: const Text(
               "Editar",
               style: TextStyle(

@@ -9,8 +9,8 @@ import '../models/user.dart';
 
 class UsuarioForm extends StatefulWidget {
   var user;
-
-  UsuarioForm({Key? key, this.user}) : super(key: key);
+  var func;
+  UsuarioForm({Key? key, this.user, this.func}) : super(key: key);
 
   @override
   _UsuarioFormState createState() => _UsuarioFormState();
@@ -94,6 +94,16 @@ class _UsuarioFormState extends State<UsuarioForm> {
   Widget build(BuildContext context) {
     return  Scaffold(
         appBar: AppBar(
+          actions: [
+            Text("test")
+          ],
+          leading:  IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: ()async {
+              Navigator.of(context).pop();
+              await widget.func();
+            },
+          ) ,
           title: Text("Criar Novo Usuário", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
           centerTitle: true,
           backgroundColor:  Color.fromRGBO(70, 168, 177, 1),

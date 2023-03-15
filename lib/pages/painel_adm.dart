@@ -23,109 +23,113 @@ class PainelADM extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    width: sizeBox,
-                  ),
-                  containerConfig(
-                    title: "Adicionar nova rota",
-                    icon: Icons.directions_bus_filled_sharp,
-                    onTap: () {
-                      Navigator.push(
-                        context,
+            Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                width: sizeBox,
+              ),
+              containerConfig(
+                title: "Adicionar nova rota",
+                icon: Icons.directions_bus_filled_sharp,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateRouter(),
+                    ),
+                  );
+                },
+              ),
+              Container(
+                width: sizeBox,
+              ),
+              containerConfig(
+                  title: "Ver rotas",
+                  icon: Icons.route,
+                  onTap: () =>
+                      Navigator.push(context,
                         MaterialPageRoute(
-                          builder: (context) =>  CreateRouter(),
+                          builder: (context) => const ListRouter(),
                         ),
-                      );
-                    },
-                  ),
-                  Container(
-                    width: sizeBox,
-                  ),
-                  containerConfig(
-                    title: "Ver rotas",
-                    icon: Icons.route,
-                    onTap: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const ListRouter(),
-                        ),
-                    )
-                  ),
-                  Container(
-                    width: sizeBox,
-                  ),
-                  containerConfig(
-                    title: "Relatorios",
-                    icon: Icons.report,
-                    onTap: () =>
-                        Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserClientPage(),
                       )
-                        ),
+              ),
+              Container(
+                width: sizeBox,
+              ),
+              containerConfig(
+                title: "Cliente",
+                icon: Icons.person,
+                onTap: () =>
+                    Navigator.push(context,
+                        MaterialPageRoute(
+                          builder: (context) => UserClientPage(),
+                        )
+                    ),
 //                          Navigator.push(context,
 //                            MaterialPageRoute(builder: (context) => RelatorioHomePage()
 //                              ,
 //                            ),
 //                          ),
-                  ),
-                  Container(
-                    width: sizeBox,
-                  ),
-                ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    width: sizeBox,
-                  ),
-                  containerConfig(
-                    title: "Configuração de usuarios",
-                    icon: Icons.settings,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserListPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  Container(
-                    width: sizeBox,
-                  ),
-                  containerConfig(
-                    title: "Sair",
-                    icon: Icons.exit_to_app,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeClient(),
-                        ),
-                      );
-                    },
-                  ),
-                  Container(
-                    width: sizeBox,
-                  ),
-                  containerConfig(
-                    title: "Relatorios",
-                    icon: Icons.report,
-                    onTap: () =>
-                          Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => RelatorioHomePage()
-                              ,
-                            ),
-                          ),
-                  )
-                ],
+              Container(
+                width: sizeBox,
               ),
             ],
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+            Container(
+            width: sizeBox,
+          ),
+          containerConfig(
+            title: "Configuração de usuarios",
+            icon: Icons.settings,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserListPage(),
+                ),
+              );
+            },
+          ),
+          Container(
+          width: sizeBox,
         ),
+        containerConfig(
+          title: "Relatorios",
+          icon: Icons.report,
+          onTap: () =>
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => RelatorioHomePage()
+                  ,
+                ),
+              ),
+        ),
+        Container(
+          width: sizeBox,
+        ),
+        containerConfig(
+          title: "Rotas por Cidade",
+          icon: Icons.location_city,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomeClient(),
+              ),
+            );
+          },
+        ),
+        ],
       ),
+      ],
+    ),)
+    ,
+    )
+    ,
     );
   }
 

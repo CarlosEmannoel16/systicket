@@ -1,10 +1,16 @@
 import 'dart:convert';
-import 'dart:ffi';
-
+import 'dart:io';
+import 'dart:typed_data';
+//import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
+//import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:systikcet/models/route.dart';
 import 'package:systikcet/models/user.dart';
-import 'package:systikcet/pages/usuario_form.dart';
+
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
+//import 'package:pdf_demo/pdf_preview_screen.dart';
+
 
 import '../api_client.dart';
 // import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -19,44 +25,61 @@ class UserClientPage extends StatefulWidget {
 
 class _UserClientState extends State<UserClientPage> {
 
-  loadForEdit() async {
-//    print(widget.id);
-//    var teste = widget.id != null ?  true : false;
-//    if(teste) {
-//      final http.Response responseUser;
-//      final http.Response responseEndereco;
-//      responseUser = await ToDoAPI.getById("usuario", widget.id);
-//      responseEndereco = await ToDoAPI.getById("endereco", widget.endereco_id);
-//      var jsonResponse = json.decode(responseUser.body);
-//      Usuario u;
-//      var usuario =  Usuario.fromJson(jsonResponse);
-//
-//      var jsonResponseEndereco = json.decode(responseEndereco.body);
-//      var endereco =  Endereco.fromJson(jsonResponseEndereco);
-//      setState(()  {
-//        _nomeController.text = usuario.nome;
-//        _sobrenomeController.text = usuario.sobrenome;
-//        _emailController.text = usuario.email;
-//        _telefoneController.text = usuario.telefone;
-//        _senhaController.text = usuario.senha;
-//        // _perfilController.text = usuario.perfil;
-//        _senhaController.text = usuario.senha;
-//
-//        _ruaController.text = endereco.rua;
-//        _referenciaController.text = endereco.referencia;
-//        _bairroController.text = endereco.bairro;
-//        _numeroController.text = endereco.numero;
-//        _cidadeController.text = endereco.cidade;
-//      });
-//    }
-  }
   List<User> userList = <User>[];
   List<Routes> routeList = <Routes>[];
+  List<Routes> _arrive_time_List = <Routes>[];
   List<Routes> routeByCity = <Routes>[];
   final TextEditingController _origemController = TextEditingController();
   final TextEditingController _destinoController = TextEditingController();
   final TextEditingController _horaController = TextEditingController();
   var id;
+  var _arrive_time = null;
+  final doc = pw.Document();
+  final pdf = pw.Document();
+//  Widget pdfView() => PdfView(
+//    controller: pdfController,
+//  );
+
+  _creatPdf(name, lastName, year) async {
+    pdf.addPage(pw.MultiPage(
+        build: (pw.Context context) => [
+          pw.Table.fromTextArray(data: <List<String>>[
+            <String>['Nome', 'Sobrenome', 'Idade'],
+            [name, lastName, year]
+          ])
+        ]));
+
+    //final String dir = (await getApplicationDocumentsDirectory()).path;
+
+//    final String path = '$dir/pdfExample.pdf';
+//    final File file = File(path);
+//    file.writeAsBytesSync(pdf.save());
+//
+//    Navigator.of(context).push(MaterialPageRoute(
+//        builder: (_) => ViewPdf(
+//          path,
+//        )));
+//  }
+}
+  Future savePdf() async {
+    Directory documentDirectory = await getApplicationDocumentsDirectory();
+    String documentPath = documentDirectory.path;
+    File file = await File("$documentPath/example.pdf").create();
+    pdf.save();
+    file.writeAsBytesSync(pdf.save() as Uint8List );
+  }
+
+//  Pdf(format){
+//    print(format);
+//    doc.addPage(pdf.Page(
+//        pageFormat: format.a4,
+//        build: (pdf.Context context) {
+//          return pdf.Center(
+//            child: pdf.Text('Hello World'),
+//          ); // Center
+//        }));
+//    return doc.save();
+//  }
   void getRoute() async {
     await Client.get("route").then((response) {
       setState(() {
@@ -65,6 +88,9 @@ class _UserClientState extends State<UserClientPage> {
         Iterable lista = responseData;
         routeList =
             lista.map((model) => Routes.fromJson(model)).toList();
+        _arrive_time_List =
+            lista.map((model) => Routes.fromJson(model)).toList();
+        routeList.sort((a, b) => a.arrive_time.compareTo(b.arrive_time));
       });
       // print("dd ${_listClasses}");
     });
@@ -104,10 +130,9 @@ class _UserClientState extends State<UserClientPage> {
   Widget build(BuildContext context) {
     return  Scaffold(
         appBar: AppBar(
-          // title: Text("Criar Novo Usuário", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
-          centerTitle: true,
-          backgroundColor:  Color.fromRGBO(70, 168, 177, 1),
-          // backgroundColor:  Color.fromRGBO(255, 255, 255, 1),
+          title: const Text("Passagens", style: TextStyle(color: Colors.black),),
+          backgroundColor:  Colors.white,
+          iconTheme: const IconThemeData(color: Colors.black),
         ),
         body: SingleChildScrollView(
           child:Container(
@@ -129,10 +154,11 @@ class _UserClientState extends State<UserClientPage> {
                         child: paddingInputRight(),
                       ),
                       Expanded(
-                        child: textFormField(
-                          title: "Hora",
-                          controller: _horaController,
-                        ),
+//                        child: textFormField(
+//                          title: "Hora",
+//                          controller: _horaController,
+//                        ),
+                      child: DropdownForm("Hora"),
                       ),
                       Expanded(
                         child:  SizedBox(
@@ -305,8 +331,8 @@ class _UserClientState extends State<UserClientPage> {
                   ),
                 ),
                 OutlinedButton(
-                  onPressed:() async => {
-                    await Comprar(routerId, costumerId),
+                  onPressed:() async  => {
+                     Comprar(routerId, costumerId),
                     Navigator.of(context).pop()
                     // Navigator.of(context).pop()
                   },
@@ -401,23 +427,20 @@ class _UserClientState extends State<UserClientPage> {
     );
   }
 
-  Comprar(router,costumer ) async{
+  Comprar(router,costumer )async{
+
       var  data = json.encode({
         "router_id": router,
         "costumer_id": costumer
       });
       var a = await Client.create(data, "purchase");
       print(a);
-//    .then((res) {
-//    print(res.body);
-//    print(res);
-//    })
 
   }
 
   search() async{
     await Client.getT("route/filter", origem:  _origemController.text,
-        destino: _destinoController.text, data: "13:00:00").then((response) {
+        destino: _destinoController.text, hora: _arrive_time ).then((response) {
       setState(() {
         print(response.body);
         var responseData = json.decode(response.body);
@@ -425,9 +448,51 @@ class _UserClientState extends State<UserClientPage> {
         Iterable lista = responseData;
         routeList =
             lista.map((model) => Routes.fromJson(model)).toList();
+//        _arrive_time_List =
+//            lista.map((model) => Routes.fromJson(model)).toList();
+
+        _arrive_time_List.sort((a, b) => a.arrive_time.compareTo(b.arrive_time));
+
       });
       // print("dd ${_listClasses}");
     });
     ///print(a);
   }
+  Widget DropdownForm(String hint){
+    //print(_arrive_time);
+    return DropdownButton(
+      value:  _arrive_time != null ? _arrive_time : null,
+      hint: Text(
+        hint,
+        style: TextStyle(
+          color: Color.fromRGBO(70, 168, 177, 1),
+          fontSize: 20.0,
+        ),
+      ),
+      style: TextStyle(
+        color: Color.fromRGBO(70, 168, 177, 1),
+        fontSize: 20.0,
+      ),
+      isExpanded: true,
+      underline: Container(
+        height: 2,
+        color: Color.fromRGBO(70, 168, 177, 1),
+      ),
+      onChanged: (newValue) {
+        print(newValue);
+        setState(() {
+          _arrive_time = newValue!;
+          print(_arrive_time);
+        });
+      },
+      items: _arrive_time_List.map((item) {
+        print("aa ${item}");
+        return DropdownMenuItem(
+          value: item.arrive_time,
+          child: Text(item.arrive_time),
+        );
+      }).toList(),
+    );
+  }
+
 }

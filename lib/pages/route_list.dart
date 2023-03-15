@@ -38,7 +38,6 @@ class _ListRouterState extends State<ListRouter> {
         routeList =
             lista.map((model) => Routes.fromJson(model)).toList();
       });
-      // print("dd ${_listClasses}");
     });
     // return _listClasses;
   }
@@ -54,7 +53,6 @@ class _ListRouterState extends State<ListRouter> {
         routeList =
             lista.map((model) => Routes.fromJson(model)).toList();
       });
-      // print("dd ${_listClasses}");
     });
     ///print(a);
   }
@@ -79,7 +77,8 @@ class _ListRouterState extends State<ListRouter> {
       backgroundColor: Colors.white,
       body:
         Container(
-          height: 620.0,width: 1300.0,
+          height: double.infinity,
+          width: double.infinity,
           child: Column(
             children: [
               Padding(
@@ -185,8 +184,8 @@ class _ListRouterState extends State<ListRouter> {
         ),
         border: OutlineInputBorder(
           borderSide: const BorderSide(color: Color.fromRGBO(171, 169, 166, 1)),
-          borderRadius: BorderRadius.circular(2.0),
-        ),
+      borderRadius: BorderRadius.circular(2.0),
+    ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(2.0),
           borderSide: const BorderSide(
@@ -229,7 +228,7 @@ class _ListRouterState extends State<ListRouter> {
                 padding: const EdgeInsets.only(right: 6.0),
                 child: OutlinedButton(
                   onPressed: () => {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateRouter(rota: routeList[index],)))
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateRouter(rota: routeList[index],func: getRoute)))
                   },
                   child: const Text(
                     "Editar",

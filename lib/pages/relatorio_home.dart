@@ -23,7 +23,7 @@ class _RelatorioHomeState extends State<RelatorioHomePage> {
 
   List<User> userList = <User>[];
   List<Routes> routeList = <Routes>[];
-
+  var _arrive_time;
   void getRoute() async {
     await Client.get("purchase").then((response) {
       setState(() {
@@ -360,5 +360,41 @@ class _RelatorioHomeState extends State<RelatorioHomePage> {
       print("dd ${routeList}");
     });
     ///print(a);
+  }
+
+  Widget DropdownForm(String hint){
+    return DropdownButton(
+      value:  _arrive_time != null ? _arrive_time : null,
+      hint: Text(
+        hint,
+        style: TextStyle(
+          color: Color.fromRGBO(70, 168, 177, 1),
+          fontSize: 20.0,
+        ),
+      ),
+      style: TextStyle(
+        color: Color.fromRGBO(70, 168, 177, 1),
+        fontSize: 20.0,
+      ),
+      isExpanded: true,
+      underline: Container(
+        height: 2,
+        color: Color.fromRGBO(70, 168, 177, 1),
+      ),
+      onChanged: (newValue) {
+        print(newValue);
+        setState(() {
+          _arrive_time = newValue!;
+          print(_arrive_time);
+        });
+      },
+      items: routeList.map((item) {
+        print("aa ${item}");
+        return DropdownMenuItem(
+          value: item.arrive_time,
+          child: Text(item.arrive_time),
+        );
+      }).toList(),
+    );
   }
 }

@@ -6,7 +6,8 @@ import 'package:systikcet/models/city.dart';
 
 class CreateRouter extends StatefulWidget {
   var rota;
-  CreateRouter({Key? key, this.rota }) : super(key: key);
+  var func;
+  CreateRouter({Key? key, this.rota,this.func}) : super(key: key);
 
   @override
   State<CreateRouter> createState() => _CreateRouterState();
@@ -27,6 +28,8 @@ class _CreateRouterState extends State<CreateRouter> {
   // ignore: deprecated_member_use
   List<Cities> _listClasses = <Cities>[];
 
+  GlobalKey<FormState> _formulario = GlobalKey<FormState>();
+
   getCities() async {
     await Client.get("city").then((response) {
       setState(() {
@@ -46,7 +49,8 @@ class _CreateRouterState extends State<CreateRouter> {
   loadForEdit() async {
     //print(widget.rota?.id);
     var teste = widget.rota?.id != null ?  true : false;
-    //print("ee ${widget.rota}");
+    print("ee ${widget.rota.router_id}");
+    print("ee ${widget.rota.id}");
     if(teste) {
       setState(()  {
         _cityOrigem = widget.rota.origem.toString();
@@ -56,6 +60,7 @@ class _CreateRouterState extends State<CreateRouter> {
         _horarioEntradaController.text = widget.rota.departure_time;
         _horarioSaidaController.text = widget.rota.arrive_time;
         _valorController.text = widget.rota.value;
+        _subrotaController.text = widget.rota.subrota;
       });
     }
   }
@@ -74,6 +79,14 @@ class _CreateRouterState extends State<CreateRouter> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading:  IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: ()async {
+            Navigator.of(context).pop();
+            if(widget.func !=  null)
+              await widget.func();
+          },
+        ) ,
         title: const Text(
           "Criar rota",
           style: TextStyle(
@@ -86,7 +99,9 @@ class _CreateRouterState extends State<CreateRouter> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(200.0),
-        child: Column(
+        child: Form(
+          key: _formulario,
+          child: Column(
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -109,7 +124,7 @@ class _CreateRouterState extends State<CreateRouter> {
                   onPressed: casdastra,
                   child:  Text(
                     widget.rota != null ? "Atualizar" : "Cadastra" ,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                     ),
                   ),
@@ -121,39 +136,39 @@ class _CreateRouterState extends State<CreateRouter> {
               ),
             ),
           ],
-        ),
+        ),),
       ),
     );
   }
 
   Padding paddingInputLeft() {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(7.0),
             child:
                //textFormField(title: "Origem", controller: _origemController),
               DropdownForm("Origem"),
           ),
           Container(
-            height: 40,
+            height: 9,
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(7.0),
             child: textFormField(
               title: "Horário de saida",
               controller: _horarioSaidaController,
             ),
           ),
           Container(
-            height: 40,
+            height: 9,
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(7.0),
             child: textFormField(
               title: "Subrota de rota",
               controller: _subrotaController,
@@ -166,30 +181,30 @@ class _CreateRouterState extends State<CreateRouter> {
 
   Padding paddingInputRight() {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(7.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(7.0),
             child: DropdownForm2("Destino"),
             //textFormField(title: "Destino", controller: _destinoController,),
           ),
           Container(
-            height: 40,
+            height: 9,
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(7.0),
             child: textFormField(
                 title: "Horário de chegada",
                 controller: _horarioEntradaController),
           ),
           Container(
-            height: 40,
+            height: 9,
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(7.0),
             child: textFormField(
               title: "Valor",
               controller: _valorController,
@@ -206,6 +221,11 @@ class _CreateRouterState extends State<CreateRouter> {
   }) {
     return TextFormField(
       controller: controller,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Esse campo e obrigatório";
+        }
+      },
       decoration: InputDecoration(
         labelText: title,
         labelStyle: const TextStyle(
@@ -306,26 +326,29 @@ class _CreateRouterState extends State<CreateRouter> {
 
 
   casdastra() async {
+    if(_formulario.currentState!.validate()){
+      var  data = json.encode({
+        "origem": _cityOrigem,
+        "destiny": _cityDestino,
+        "departure_time": _horarioEntradaController.text,
+        "arrive_time": _horarioSaidaController.text,
+        "value": _valorController.text,
+        "router_id": _subrotaController.text
+      });
+      var action;
+      if(widget.rota != null) {
+        action = await Client.update(widget.rota.id,data, "route");
+      }
+      else {
+        var a = await Client.create(data, "route");
+      }
 
-    var  data = json.encode({
-      "origem": _cityOrigem,
-      "destiny": _cityDestino,
-      "departure_time": _horarioEntradaController.text,
-      "arrive_time": _horarioSaidaController.text,
-      "value": _valorController.text
-    });
-    var action;
-    if(widget.rota != null) {
-      action = await Client.update(widget.rota.id,data, "route");
-    }
-    else {
-      var a = await Client.create(data, "route");
-    }
-
-    print(action);
+      print(action);
 //    .then((res) {
 //    print(res.body);
 //    print(res);
 //    })
-  }
+    }
+    }
+
 }

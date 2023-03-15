@@ -13,8 +13,8 @@ class Routes {
   final String origemName;
   final String destinyName;
   final int purchaseCount;
-  // final int router_id;
-
+  final int router_id;
+  final String subrota;
   const Routes({
     required this.id,
     required this.origem,
@@ -24,8 +24,9 @@ class Routes {
     required this.value,
     required this.origemName,
     required this.destinyName,
-    required this.purchaseCount
-    // required this.router_id
+    required this.purchaseCount,
+    required this.router_id,
+    required this.subrota
   });
 
   factory Routes.fromJson(Map<String, dynamic> json) {
@@ -38,8 +39,10 @@ class Routes {
         value: json['value'],
         origemName: json['origemName'],
         destinyName: json['destinyName'],
-        purchaseCount: json['purchaseCount'] != null ? json['purchaseCount'] : 0
-        // router_id: json['router_id'] ? json['router_id'] : 0
+        purchaseCount: json['purchaseCount'] != null ? json['purchaseCount'] : 0,
+        router_id: json['router_id'] != null? json['router_id'] : 0,
+        subrota: json['subrota'],
+
     );
   }
 
@@ -54,9 +57,8 @@ class Routes {
     data['origemName'] = this.origemName;
     data['destinyName'] = this.destinyName;
     data['purchaseCount'] = this.purchaseCount;
-
-
-    // data['route_id'] = this.router_id;
+    data['router_id'] = this.router_id;
+    data['subrota'] = this.subrota;
 
     return data;
   }

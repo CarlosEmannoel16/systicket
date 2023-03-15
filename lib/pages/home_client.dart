@@ -126,26 +126,26 @@ class _HomeClientState extends State<HomeClient> {
                   Container(
                     width: sizeBox,
                   ),
-                  containerConfig(
-                    title: "Configuração de usuarios",
-                    icon: Icons.settings,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserListPage(),
-                        ),
-                      );
-                    },
-                  ),
+//                  containerConfig(
+//                    title: "Configuração de usuarios",
+//                    icon: Icons.settings,
+//                    onTap: () {
+//                      Navigator.push(
+//                        context,
+//                        MaterialPageRoute(
+//                          builder: (context) => UserListPage(),
+//                        ),
+//                      );
+//                    },
+//                  ),
                   Container(
                     width: sizeBox,
                   ),
-                  containerConfig(
-                    title: "Sair",
-                    icon: Icons.exit_to_app,
-                    onTap: () {},
-                  ),
+//                  containerConfig(
+//                    title: "Sair",
+//                    icon: Icons.exit_to_app,
+//                    onTap: () {},
+//                  ),
                   Container(
                     width: sizeBox,
                   ),
